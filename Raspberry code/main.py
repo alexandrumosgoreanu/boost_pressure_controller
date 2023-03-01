@@ -24,13 +24,13 @@ lcd = GpioLcd(rs_pin = Pin(16),
               d7_pin = Pin(21),
               num_lines = 2, num_columns = 16)
 
-# ADC potentiometer on GPIO 28 (Pin 34)
+# ADC potentiometer on GPIO 28
 pot = ADC(27)
 
 # MAP sensor voltage
 map = ADC(28)
 
-# PWM on pin14
+# PWM on pin 14
 pwm = PWM(Pin(22))
 pwm.freq(50)
 
@@ -48,14 +48,14 @@ def map_scaling(value):
     return (value - 0.030434) / 1.8478
 
 def readSensorData(ref, map):
-    refv = round(read_pin(pot) / 65215 * 0.5, 2)
+    refv = round(read_pin(pot) / 65215 * 1.5, 2)
     mapv = round(map_scaling(convert_to_voltage(read_pin(map))), 2)
     return refv, mapv
 
 def printToDisplay(lcd, refv, mapv):
-    lcd.putstr('Ref:' + str(refv) + ' bar')
+    lcd.putstr('Ref:' + refv + ' bar')
     lcd.move_to(0,1)
-    lcd.putstr('MAP:'+ str(mapv) + ' bar')
+    lcd.putstr('MAP:'+ mapv + ' bar')
 
 
 class Senzor(WebSocketClient):
@@ -86,40 +86,36 @@ class AppServer(WebSocketServer):
     def _make_client(self, conn):
         return Senzor(conn)
         
-
-Kp = 600000
-Ki = 5000
-err_sum = 0
-err_prev = 0
 dc_minim = 5000
 dc_maxim = 38000
+Kp = 125000
+Ki = 20000
+err_sum = 0
+
 
 server = AppServer()
 server.start(3000)
-last_time = time.ticks_us()
 
+last_time = time.ticks_us()
 try:
     while True:
         refv, mapv = readSensorData(pot,map)
-        printToDisplay(lcd, refv+1, mapv)
-
-        err = mapv - refv - 1
+        printToDisplay(lcd, str(refv), str(mapv))
+        
+        err = mapv - refv
         output = Kp * err  + Ki * err_sum
         
         if output > dc_maxim:
-            output = 65215
+            output = 65535
         if output < dc_minim:
             output = 0
-        
         if err > 0:
             err_sum += err
-
         pwm.duty_u16(int(output))
-        server.process_all(refv+1,mapv)
+        #print(output)
         
+        server.process_all(refv,mapv)
         current_time = time.ticks_us()
-        print(str(err) + " " +str(output))
-        last_time=current_time
         lcd.clear()
         
 except KeyboardInterrupt:
