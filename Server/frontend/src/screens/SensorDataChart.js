@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer,
+  //ResponsiveContainer,
 } from "recharts";
 import { Row, Container } from "react-bootstrap";
 
@@ -26,8 +26,6 @@ const SensorChart = () => {
 
     ws.current.onmessage = (ev) => {
       const message = JSON.parse(ev.data);
-      //console.log(`Received message :: ${message.targetBoost}`);
-      // Upon receiving websocket message then add it to the list of data that we are displaying
       let newDataArray = [
         ...data,
         {
@@ -44,7 +42,7 @@ const SensorChart = () => {
       console.log("Client socket close!");
     };
 
-    //We limit the number of reads to the last 24 reading and drop the last read
+    //We limit the number of reads to the last 100 readings and drop the last read
     function limitData(currentData, message) {
       if (currentData.length > 100) {
         console.log("Limit reached, dropping first record!");
@@ -70,7 +68,7 @@ const SensorChart = () => {
   return (
     <Container className="p-3">
       <Row className="justify-content-md-center">
-        <h1 className="header">Real time IOT Sensor Data Using Websockets</h1>
+        <h1 className="header">Real time MAP Sensor Data Using Websockets</h1>
       </Row>
       <Row className="justify-content-md-center">
         <div style={{ width: 1200, height: 600 }}>

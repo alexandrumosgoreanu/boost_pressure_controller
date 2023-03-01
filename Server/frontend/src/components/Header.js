@@ -8,7 +8,7 @@ const Header = () => {
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect>
         <Container>
           <LinkContainer to={"/"}>
-            <Navbar.Brand>Licenta</Navbar.Brand>
+            <Navbar.Brand>Proiect de Licenta - Alexandru Mosgoreanu</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -16,11 +16,6 @@ const Header = () => {
               <LinkContainer to={"/"}>
                 <Nav.Link>
                   <i className="fas fa-home px-2"></i>Home
-                </Nav.Link>
-              </LinkContainer>
-              <LinkContainer to={"/about"}>
-                <Nav.Link>
-                  <i className="fas fa-user px-2"></i>About Us
                 </Nav.Link>
               </LinkContainer>
             </Nav>
